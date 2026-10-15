@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الخزنة المشروطة - GeoTime Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#080d22;--pu:#8b5cf6;--gr:#34d399;--tx:#e6e9ff;--mu:#9aa3cf;--gl:rgba(255,255,255,.06);--bd:rgba(139,92,246,.35);--er:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--bg) radial-gradient(circle at 85% 0,rgba(139,92,246,.3),transparent 45%) fixed;color:var(--tx);font-family:'Cairo',system-ui,sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:18px 14px 40px}
+h1{margin:4px 0;font-size:1.8rem;font-weight:800;background:linear-gradient(90deg,var(--pu),var(--gr));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mu);margin:0 0 16px}
+.glass{background:var(--gl);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+label.l{display:block;font-weight:600;margin:12px 0 6px}
+textarea,input,select{width:100%;font:inherit;color:var(--tx);background:rgba(0,0,0,.4);border:1px solid var(--bd);border-radius:10px;padding:10px}
+textarea{min-height:110px;resize:vertical}
+input[type=checkbox]{width:auto}
+:is(textarea,input,select,button):focus-visible{outline:2px solid var(--gr);outline-offset:2px}
+.sw{display:flex;gap:10px;align-items:center;font-weight:600;margin-top:14px}
+.box{border-inline-start:3px solid var(--pu);padding-inline-start:12px;margin-top:8px}
+.two{display:flex;gap:8px}
+.btn{font:inherit;font-weight:700;color:#fff;border:0;border-radius:12px;padding:11px 18px;cursor:pointer;background:linear-gradient(135deg,var(--pu),#5b21b6)}
+.btn.g{background:linear-gradient(135deg,#10b981,#047857)}
+.btn.o{background:transparent;border:1px solid var(--bd)}
+.btn:disabled{opacity:.5;cursor:wait}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.mu{color:var(--mu);font-size:.88rem}
+.err{color:var(--er);margin-top:10px}
+.ok{color:var(--gr)}
+.hide{display:none!important}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--bd);border-radius:20px;padding:4px 12px;font-size:.9rem;background:rgba(139,92,246,.12)}
+.big{font-size:2rem;font-weight:800;text-align:center;direction:ltr;color:var(--gr);margin:12px 0}
+#stageWrap{background:#02040d;border:1px solid var(--gr);border-radius:14px;padding:6px;box-shadow:0 0 24px rgba(52,211,153,.2)}
+#stage{height:min(52vh,360px);overflow:auto;padding:16px;font-size:1.25rem;line-height:1.9;white-space:pre-wrap;word-break:break-word;direction:auto;color:#d1fae5;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;-webkit-mask-image:radial-gradient(circle 80px at var(--x,-999px) var(--y,-999px),#000 50%,transparent 100%);mask-image:radial-gradient(circle 80px at var(--x,-999px) var(--y,-999px),#000 50%,transparent 100%)}
+#stage.veil{visibility:hidden}
+@media print{body{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🔐 الخزنة المشروطة - GeoTime Vault</h1>
+<p class="sub">شفّر رسالة سرية في رابط واحد، ولا تُفتح إلا في المكان والوقت اللذين تحددهما. لا خادم ولا قاعدة بيانات.</p>
+
+<section id="create">
+<div class="glass">
+<label class="l" for="msg">الرسالة السرية</label>
+<textarea id="msg" placeholder="اكتب الرسالة التي تريد حمايتها..."></textarea>
+<label class="l" for="pw">كلمة مرور إضافية (اختياري)</label>
+<input id="pw" type="password" autocomplete="new-password" placeholder="اتركها فارغة إن لم تحتجها">
+
+<label class="sw"><input type="checkbox" id="geoOn">📍 القفل الجغرافي (Geo-Lock)</label>
+<div class="box hide" id="geoBox">
+<div class="row" style="margin-top:6px"><button class="btn o" id="locBtn" type="button">تحديد موقعي الحالي كشرط لفتح الرسالة</button></div>
+<div class="two" style="margin-top:10px"><input id="lat" inputmode="decimal" placeholder="خط العرض Latitude"><input id="lon" inputmode="decimal" placeholder="خط الطول Longitude"></div>
+<div class="mu" id="geoNote">تُقرَّب الإحداثيات إلى 3 خانات عشرية (سماحية نحو 100 متر) وتدخل في مفتاح التشفير.</div>
+</div>
+
+<label class="sw"><input type="checkbox" id="timeOn">⏱ القفل الزمني (Time-Lock)</label>
+<div class="box hide" id="timeBox">
+<select id="timeSel" aria-label="موعد الفتح">
+<option value="5">تُفتح بعد 5 دقائق</option>
+<option value="60">تُفتح بعد ساعة</option>
+<option value="1440">تُفتح بعد 24 ساعة</option>
+<option value="c">في وقت محدد</option>
+</select>
+<input id="timeAt" type="datetime-local" class="hide" style="margin-top:8px">
+</div>
+
+<label class="sw"><input type="checkbox" id="expOn">💣 التدمير الذاتي (Self-Destruct)</label>
+<div class="box hide" id="expBox">
+<select id="expSel" aria-label="مدة الصلاحية">
+<option value="10">تنتهي بعد 10 دقائق</option>
+<option value="60">تنتهي بعد ساعة</option>
+<option value="1440">تنتهي بعد 24 ساعة</option>
+<option value="10080">تنتهي بعد 7 أيام</option>
+</select>
+<div class="mu">تُحسب المدة من وقت الفتح المحدد في القفل الزمني، أو من لحظة الإنشاء إن لم تفعّله.</div>
+<label class="sw" style="margin-top:8px"><input type="checkbox" id="burn">🔥 تُحرق بعد القراءة مرة واحدة (على جهاز المستلم)</label>
+</div>
+<div class="err" id="cErr"></div>
+<div class="row"><button class="btn g" id="mk" type="button">🔒 إنشاء الخزنة وتوليد الرابط</button></div>
+</div>
+<div class="glass hide" id="done">
+<b class="ok">تم إنشاء الخزنة</b>
+<div class="chips" id="sum"></div>
+<label class="l" for="link">الرابط السري</label>
+<textarea id="link" readonly style="min-height:90px;direction:ltr;text-align:left;font-size:.8rem"></textarea>
+<div class="row"><button class="btn" id="cp" type="button">نسخ الرابط السري</button><span class="mu" id="cpOk"></span></div>
+<div class="mu" style="margin-top:10px">أرسل الرابط كاملاً بما فيه الجزء بعد علامة #. لا يصل هذا الجزء إلى أي خادم.</div>
+</div>
+</section>
+
+<section id="open" class="hide">
+<div class="glass">
+<b>🛡 خزنة مشفّرة بانتظار الفتح</b>
+<div class="chips" id="need"></div>
+<div id="pwRow" class="hide"><label class="l" for="pw2">كلمة المرور</label><input id="pw2" type="password" autocomplete="off"></div>
+<div class="err" id="oErr"></div>
+<div class="mu" id="oSt"></div>
+<div class="row"><button class="btn g" id="op" type="button">فتح الخزنة</button><button class="btn o" id="nw" type="button">إنشاء خزنة جديدة</button></div>
+</div>
+<div class="glass hide" id="lockd"><b>⏳ الخزنة مقفلة زمنياً</b><div class="big" id="cd"></div><div class="mu" id="cdAt"></div></div>
+<div class="glass hide" id="reveal">
+<b class="ok">تم فتح الخزنة</b>
+<p class="mu">حرّك إصبعك أو المؤشر فوق الشاشة لتضيء منطقة صغيرة من الرسالة. تختفي عند مغادرة الصفحة أو الضغط على PrintScreen.</p>
+<div id="stageWrap"><div id="stage" tabindex="0" aria-label="الرسالة السرية"></div></div>
+</div>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)},C=CryptoJS,ITER=10000;
+function b64u(w){return C.enc.Base64.stringify(w).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return C.enc.Base64.parse(s)}
+function r3(x){return (Math.round(x*1000)/1000).toFixed(3)}
+function secretOf(p,g){return p+"|"+(g?g[0]+","+g[1]:"-")}
+function derive(sec,salt){var k=C.PBKDF2(sec,salt,{keySize:16,iterations:ITER,hasher:C.algo.SHA256});return{e:C.lib.WordArray.create(k.words.slice(0,8),32),m:C.lib.WordArray.create(k.words.slice(8,16),32)}}
+function seal(obj,pass,geo){
+ var salt=C.lib.WordArray.random(16),iv=C.lib.WordArray.random(16),k=derive(secretOf(pass,geo),salt);
+ var ct=C.AES.encrypt(JSON.stringify(obj),k.e,{iv:iv,mode:C.mode.CBC,padding:C.pad.Pkcs7}).ciphertext;
+ var fl=(geo?1:0)|(pass?2:0);
+ var head=C.enc.Hex.parse("01"+("0"+fl).slice(-2)+C.enc.Hex.stringify(salt)+C.enc.Hex.stringify(iv)+C.enc.Hex.stringify(ct));
+ return b64u(head.clone().concat(C.HmacSHA256(head,k.m)));
+}
+function tryOpen(hex,pass,geo){
+ var mac=hex.slice(-64),body=hex.slice(0,-64),salt=C.enc.Hex.parse(body.substr(4,32)),iv=C.enc.Hex.parse(body.substr(36,32)),ct=C.enc.Hex.parse(body.slice(68));
+ var k=derive(secretOf(pass,geo),salt);
+ if(C.HmacSHA256(C.enc.Hex.parse(body),k.m).toString()!==mac)return null;
+ return JSON.parse(C.AES.decrypt({ciphertext:ct},k.e,{iv:iv,mode:C.mode.CBC,padding:C.pad.Pkcs7}).toString(C.enc.Utf8));
+}
+function tick(){return new Promise(function(r){setTimeout(r,25)})}
+function getPos(){
+ return new Promise(function(res,rej){
+  if(!navigator.geolocation)return rej(new Error("المتصفح لا يدعم تحديد الموقع."));
+  navigator.geolocation.getCurrentPosition(res,function(e){
+   rej(new Error(e.code===1?"تم رفض إذن الموقع. اسمح به من إعدادات المتصفح ثم أعد المحاولة.":e.code===2?"تعذّر تحديد الموقع. فعّل GPS وأعد المحاولة.":"انتهت مهلة تحديد الموقع."))
+  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+ });
+}
+function fmt(t){return new Date(t).toLocaleString("ar-EG")}
+function copyText(t,el){
+ function ok(){el.textContent="تم النسخ"}
+ function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");ok()}catch(e){el.textContent="تعذّر النسخ"}a.remove()}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+}
+
+/* ---------- create ---------- */
+$("geoOn").onchange=function(){$("geoBox").classList.toggle("hide",!this.checked)};
+$("timeOn").onchange=function(){$("timeBox").classList.toggle("hide",!this.checked)};
+$("timeSel").onchange=function(){$("timeAt").classList.toggle("hide",this.value!=="c")};
+$("expOn").onchange=function(){$("expBox").classList.toggle("hide",!this.checked)};
+$("locBtn").onclick=function(){
+ var b=this;b.disabled=true;$("cErr").textContent="";$("geoNote").textContent="جارٍ تحديد موقعك...";
+ getPos().then(function(p){
+  $("lat").value=r3(p.coords.latitude);$("lon").value=r3(p.coords.longitude);
+  $("geoNote").textContent="تم التحديد بدقة نحو "+Math.round(p.coords.accuracy)+" متر. تُقرَّب الإحداثيات إلى 3 خانات عشرية.";
+ }).catch(function(e){$("geoNote").textContent="";$("cErr").textContent=e.message}).then(function(){b.disabled=false});
+};
+$("mk").onclick=function(){
+ var err=$("cErr"),msg=$("msg").value,pass=$("pw").value,geo=null,t0=0;err.textContent="";
+ if(!msg.trim()){err.textContent="اكتب الرسالة السرية أولاً.";return}
+ if($("geoOn").checked){
+  var la=parseFloat($("lat").value),lo=parseFloat($("lon").value);
+  if(!isFinite(la)||!isFinite(lo)||Math.abs(la)>90||Math.abs(lo)>180){err.textContent="الإحداثيات غير صالحة. حدّد موقعك بالزر أو أدخل خط عرض بين -90 و90 وخط طول بين -180 و180.";return}
+  geo=[r3(la),r3(lo)];
+ }
+ if($("timeOn").checked){
+  var s=$("timeSel").value;
+  if(s==="c"){t0=new Date($("timeAt").value).getTime();if(!isFinite(t0)){err.textContent="اختر تاريخاً ووقتاً صحيحين.";return}if(t0<=Date.now()){err.textContent="الوقت المحدد يجب أن يكون في المستقبل.";return}}
+  else t0=Date.now()+(+s)*60000;
+ }
+ var btn=this;btn.disabled=true;btn.textContent="جارٍ التشفير...";
+ setTimeout(function(){
+  try{
+   var xx=0,bn=0;if($("expOn").checked){xx=(t0||Date.now())+(+$("expSel").value)*60000;bn=$("burn").checked?1:0}
+   var tok=seal({v:1,m:msg,t:t0,c:Date.now(),x:xx,b:bn},pass,geo);
+   $("link").value=location.href.split("#")[0]+"#data="+tok;
+   var h="<span class='chip'>🔐 AES-256 + HMAC</span>";
+   if(geo)h+="<span class='chip'>📍 "+geo[0]+" , "+geo[1]+"</span>";
+   if(t0)h+="<span class='chip'>⏱ تُفتح "+fmt(t0)+"</span>";
+   if(pass)h+="<span class='chip'>🔑 كلمة مرور</span>";
+   if(xx)h+="<span class='chip'>💣 تنتهي "+fmt(xx)+"</span>";if(bn)h+="<span class='chip'>🔥 تُحرق بعد القراءة</span>";$("sum").innerHTML=h;$("done").classList.remove("hide");$("cpOk").textContent="";
+   $("done").scrollIntoView({behavior:"smooth"});
+  }catch(e){err.textContent="فشل التشفير: "+e.message}
+  btn.disabled=false;btn.textContent="🔒 إنشاء الخزنة وتوليد الرابط";
+ },40);
+};
+$("cp").onclick=function(){copyText($("link").value,$("cpOk"))};
+
+/* ---------- open ---------- */
+var hex="",flags=0,secret=null,cdT=0,xT=0,exp=0,burn=0,vid="";
+function route(){
+ var m=/^#data=([A-Za-z0-9_-]+)$/.exec(location.hash);
+ $("create").classList.toggle("hide",!!m);$("open").classList.toggle("hide",!m);
+ if(!m)return;
+ try{hex=C.enc.Hex.stringify(unb64u(m[1]))}catch(e){hex=""}
+ if(hex.length<68+64+32||hex.substr(0,2)!=="01"){$("oErr").textContent="الرابط تالف أو غير مكتمل. اطلب من المرسل إعادة إرساله كاملاً.";$("op").disabled=true;return}
+ flags=parseInt(hex.substr(2,2),16);vid="burn:"+hex.slice(-16);
+ if(isBurned()){gone("تم تدمير هذه الخزنة بعد قراءتها على هذا الجهاز.");return}
+ var h="<span class='chip'>🔐 AES-256</span>";
+ if(flags&1)h+="<span class='chip'>📍 يتطلب موقعاً جغرافياً محدداً</span>";
+ if(flags&2)h+="<span class='chip'>🔑 يتطلب كلمة مرور</span>";
+ $("need").innerHTML=h;$("pwRow").classList.toggle("hide",!(flags&2));
+}
+window.addEventListener("hashchange",route);route();
+$("nw").onclick=function(){location.hash="";route()};
+$("op").onclick=function(){
+ var btn=this,pass=$("pw2").value,e=$("oErr");e.textContent="";
+ if((flags&2)&&!pass){e.textContent="أدخل كلمة المرور.";return}
+ btn.disabled=true;
+ var cells=[[0,0]];
+ var chain=(flags&1)?($("oSt").textContent="جارٍ تحديد موقعك...",getPos().then(function(p){
+  var la=Math.round(p.coords.latitude*1000),lo=Math.round(p.coords.longitude*1000);
+  cells=[];for(var a=0;a<9;a++){cells.push([a%3-1,Math.floor(a/3)-1])}
+  cells.sort(function(x,y){return Math.abs(x[0])+Math.abs(x[1])-Math.abs(y[0])-Math.abs(y[1])});
+  return{la:la,lo:lo};
+ })):Promise.resolve({la:0,lo:0});
+ chain.then(function(base){
+  $("oSt").textContent="جارٍ التحقق من الشروط...";
+  var i=0,found=null;
+  function next(){
+   if(i>=cells.length||found)return Promise.resolve(found);
+   var c=cells[i++],g=(flags&1)?[r3((base.la+c[0])/1000),r3((base.lo+c[1])/1000)]:null;
+   return tick().then(function(){found=tryOpen(hex,pass,g);return next()});
+  }
+  return next();
+ }).then(function(obj){
+  if(!obj){e.textContent=(flags&1)?"تعذّر الفتح: كلمة المرور خاطئة أو أنك لست في الموقع المطلوب (السماحية نحو 100 متر).":"تعذّر الفتح: كلمة المرور خاطئة أو البيانات تالفة.";$("oSt").textContent="";btn.disabled=false;return}
+  $("oSt").textContent="";$("pw2").value="";$("op").parentNode.parentNode.classList.add("hide");
+  secret=obj.m;burn=obj.b||0;exp=obj.x||0;
+  if(exp&&Date.now()>exp){secret=null;gone("انتهت صلاحية هذه الخزنة وتم تدميرها.");return}
+  if(obj.t>Date.now())lockCountdown(obj.t);else show();
+ }).catch(function(x){e.textContent=x.message;$("oSt").textContent="";btn.disabled=false});
+};
+function isBurned(){try{return localStorage.getItem(vid)==="1"}catch(e){return false}}
+function gone(msg){
+ $("op").parentNode.parentNode.classList.remove("hide");$("lockd").classList.add("hide");$("reveal").classList.add("hide");
+ $("pwRow").classList.add("hide");$("need").innerHTML="<span class='chip'>💥 مدمَّرة</span>";$("oErr").textContent=msg;$("oSt").textContent="";$("op").disabled=true;
+}
+function destroy(msg){
+ secret=null;hex="";clearInterval(cdT);clearInterval(xT);$("stage").textContent="";
+ try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
+ gone(msg);
+}
+function lockCountdown(t){
+ $("lockd").classList.remove("hide");$("cdAt").textContent="تُفتح في "+fmt(t)+" حسب ساعة جهازك.";
+ function u(){
+  var d=t-Date.now();
+  if(d<=0){clearInterval(cdT);$("lockd").classList.add("hide");show();return}
+  var s=Math.ceil(d/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),z=s%60;
+  $("cd").textContent=[h,m,z].map(function(n){return("0"+n).slice(-2)}).join(":");
+ }
+ u();cdT=setInterval(u,1000);
+}
+
+/* ---------- anti-screenshot spotlight ---------- */
+var st=$("stage");
+function show(){
+ $("reveal").classList.remove("hide");st.textContent=secret;st.classList.remove("veil");
+ if(burn){try{localStorage.setItem(vid,"1")}catch(x){}}
+ if(exp){clearInterval(xT);xT=setInterval(function(){if(Date.now()>exp)destroy("انتهت صلاحية الخزنة وتم تدميرها.")},1000)}
+}
+function move(ev){
+ var p=ev.touches?ev.touches[0]:ev;if(!p)return;
+ var r=st.getBoundingClientRect();
+ st.style.setProperty("--x",(p.clientX-r.left)+"px");st.style.setProperty("--y",(p.clientY-r.top)+"px");
+ st.classList.remove("veil");
+}
+function off(){st.style.removeProperty("--x");st.style.removeProperty("--y")}
+["pointermove","pointerdown","touchstart","touchmove"].forEach(function(n){st.addEventListener(n,move,{passive:true})});
+["pointerleave","touchend","touchcancel"].forEach(function(n){st.addEventListener(n,off)});
+function hide(){off();st.classList.add("veil")}
+document.addEventListener("visibilitychange",function(){if(document.hidden)hide()});
+window.addEventListener("blur",hide);
+window.addEventListener("pagehide",hide);
+document.addEventListener("keyup",function(e){if(e.key==="PrintScreen"){hide();try{navigator.clipboard.writeText("")}catch(x){}}});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&/^[spc]$/i.test(e.key)&&!$("reveal").classList.contains("hide")){e.preventDefault();hide()}});
+st.addEventListener("contextmenu",function(e){e.preventDefault()});
+st.addEventListener("copy",function(e){e.preventDefault()});
+})();
+</script>
+</body>
+</html>
