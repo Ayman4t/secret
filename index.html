@@ -1,289 +1,308 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>الخزنة المشروطة - GeoTime Vault</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05050a">
+<title>Quantum Orb - القنبلة الضوئية العابرة للشاشات</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#080d22;--pu:#8b5cf6;--gr:#34d399;--tx:#e6e9ff;--mu:#9aa3cf;--gl:rgba(255,255,255,.06);--bd:rgba(139,92,246,.35);--er:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100vh;background:var(--bg) radial-gradient(circle at 85% 0,rgba(139,92,246,.3),transparent 45%) fixed;color:var(--tx);font-family:'Cairo',system-ui,sans-serif}
-.wrap{max-width:680px;margin:0 auto;padding:18px 14px 40px}
-h1{margin:4px 0;font-size:1.8rem;font-weight:800;background:linear-gradient(90deg,var(--pu),var(--gr));-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{color:var(--mu);margin:0 0 16px}
-.glass{background:var(--gl);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-label.l{display:block;font-weight:600;margin:12px 0 6px}
-textarea,input,select{width:100%;font:inherit;color:var(--tx);background:rgba(0,0,0,.4);border:1px solid var(--bd);border-radius:10px;padding:10px}
-textarea{min-height:110px;resize:vertical}
-input[type=checkbox]{width:auto}
-:is(textarea,input,select,button):focus-visible{outline:2px solid var(--gr);outline-offset:2px}
-.sw{display:flex;gap:10px;align-items:center;font-weight:600;margin-top:14px}
-.box{border-inline-start:3px solid var(--pu);padding-inline-start:12px;margin-top:8px}
-.two{display:flex;gap:8px}
-.btn{font:inherit;font-weight:700;color:#fff;border:0;border-radius:12px;padding:11px 18px;cursor:pointer;background:linear-gradient(135deg,var(--pu),#5b21b6)}
-.btn.g{background:linear-gradient(135deg,#10b981,#047857)}
-.btn.o{background:transparent;border:1px solid var(--bd)}
-.btn:disabled{opacity:.5;cursor:wait}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
-.mu{color:var(--mu);font-size:.88rem}
-.err{color:var(--er);margin-top:10px}
-.ok{color:var(--gr)}
-.hide{display:none!important}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.chip{border:1px solid var(--bd);border-radius:20px;padding:4px 12px;font-size:.9rem;background:rgba(139,92,246,.12)}
-.big{font-size:2rem;font-weight:800;text-align:center;direction:ltr;color:var(--gr);margin:12px 0}
-#stageWrap{background:#02040d;border:1px solid var(--gr);border-radius:14px;padding:6px;box-shadow:0 0 24px rgba(52,211,153,.2)}
-#stage{height:min(52vh,360px);overflow:auto;padding:16px;font-size:1.25rem;line-height:1.9;white-space:pre-wrap;word-break:break-word;direction:auto;color:#d1fae5;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;-webkit-mask-image:radial-gradient(circle 80px at var(--x,-999px) var(--y,-999px),#000 50%,transparent 100%);mask-image:radial-gradient(circle 80px at var(--x,-999px) var(--y,-999px),#000 50%,transparent 100%)}
-#stage.veil{visibility:hidden}
-@media print{body{display:none}}
+:root{--bg:#05050a;--cyan:#00f3ff;--violet:#bc13fe;--green:#10b981;--text:#e8f6ff;--muted:#8a94b8}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Rubik','Segoe UI',Tahoma,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+body{background-image:linear-gradient(rgba(0,243,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.055) 1px,transparent 1px);background-size:40px 40px;background-position:center}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(5,5,10,.85) 100%)}
+canvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;touch-action:none}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;z-index:30;pointer-events:none}
+.screen{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom));background:rgba(5,5,10,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.screen.on{display:flex}
+.box{width:100%;max-width:380px;text-align:center}
+h1{font-size:clamp(30px,9vw,44px);font-weight:800;letter-spacing:.5px;background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(188,19,254,.45))}
+.sub{color:var(--muted);margin:10px 0 28px;line-height:1.7;font-size:15px}
+.btn{display:block;width:100%;font:inherit;font-weight:700;font-size:17px;color:var(--text);background:rgba(10,14,34,.7);border:1.5px solid var(--cyan);border-radius:16px;padding:16px;margin-top:14px;cursor:pointer;box-shadow:0 0 18px rgba(0,243,255,.25),inset 0 0 14px rgba(0,243,255,.08);transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn small{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:4px}
+.btn.v{border-color:var(--violet);box-shadow:0 0 18px rgba(188,19,254,.3),inset 0 0 14px rgba(188,19,254,.1)}
+.btn.g{border-color:var(--green);box-shadow:0 0 18px rgba(16,185,129,.3)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.code{font-size:56px;font-weight:800;letter-spacing:14px;padding-inline-start:14px;color:var(--cyan);text-shadow:0 0 22px var(--cyan);direction:ltr;margin:6px 0 4px}
+.label{color:var(--muted);font-size:14px}
+input{width:100%;font:inherit;color:var(--text);background:rgba(10,14,34,.8);border:1.5px solid rgba(188,19,254,.6);border-radius:14px;padding:14px;text-align:center;font-size:17px;outline:none;margin-top:10px;user-select:text;-webkit-user-select:text}
+input:focus{border-color:var(--violet);box-shadow:0 0 16px rgba(188,19,254,.45)}
+input.num{font-size:34px;letter-spacing:12px;font-weight:700;direction:ltr;border-color:rgba(0,243,255,.6)}
+.status{margin-top:16px;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:center}
+.dot{width:10px;height:10px;border-radius:50%;background:#555;flex:none}
+.dot.ok{background:var(--green);box-shadow:0 0 10px var(--green)}
+.dot.wait{background:var(--violet);box-shadow:0 0 10px var(--violet);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+#hud{position:fixed;top:max(12px,env(safe-area-inset-top));left:0;right:0;z-index:10;display:none;justify-content:center;pointer-events:none;font-size:14px;color:var(--muted);text-align:center;padding:0 16px}
+#hud span{background:rgba(10,14,34,.6);border:1px solid rgba(0,243,255,.25);border-radius:999px;padding:8px 16px;display:inline-flex;gap:8px;align-items:center}
+#card{position:fixed;z-index:25;left:50%;top:50%;width:min(88vw,420px);transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;padding:28px 24px 22px;text-align:center;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 0 40px rgba(0,243,255,.35),0 0 90px rgba(188,19,254,.3),inset 0 0 30px rgba(255,255,255,.05);transition:opacity .6s,transform .7s cubic-bezier(.2,1.4,.4,1)}
+#card.on{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+#card .t{color:var(--green);font-size:13px;margin-bottom:14px;text-shadow:0 0 10px var(--green)}
+#msg{font-size:clamp(22px,6.5vw,30px);font-weight:700;line-height:1.7;min-height:3.4em;text-shadow:0 0 14px var(--cyan),0 0 30px var(--violet);word-break:break-word}
+#msg::after{content:"▍";color:var(--cyan);animation:pulse .8s infinite;margin-inline-start:2px}
+#msg.done::after{content:""}
+#card .btn{margin-top:18px;padding:12px;font-size:15px}
 </style>
 </head>
 <body>
-<div class="wrap">
-<h1>🔐 الخزنة المشروطة - GeoTime Vault</h1>
-<p class="sub">شفّر رسالة سرية في رابط واحد، ولا تُفتح إلا في المكان والوقت اللذين تحددهما. لا خادم ولا قاعدة بيانات.</p>
+<canvas id="cv"></canvas>
+<div id="flash"></div>
+<div id="hud"><span><i class="dot" id="hdot"></i><b id="htxt"></b></span></div>
 
-<section id="create">
-<div class="glass">
-<label class="l" for="msg">الرسالة السرية</label>
-<textarea id="msg" placeholder="اكتب الرسالة التي تريد حمايتها..."></textarea>
-<label class="l" for="pw">كلمة مرور إضافية (اختياري)</label>
-<input id="pw" type="password" autocomplete="new-password" placeholder="اتركها فارغة إن لم تحتجها">
-
-<label class="sw"><input type="checkbox" id="geoOn">📍 القفل الجغرافي (Geo-Lock)</label>
-<div class="box hide" id="geoBox">
-<div class="row" style="margin-top:6px"><button class="btn o" id="locBtn" type="button">تحديد موقعي الحالي كشرط لفتح الرسالة</button></div>
-<div class="two" style="margin-top:10px"><input id="lat" inputmode="decimal" placeholder="خط العرض Latitude"><input id="lon" inputmode="decimal" placeholder="خط الطول Longitude"></div>
-<div class="mu" id="geoNote">تُقرَّب الإحداثيات إلى 3 خانات عشرية (سماحية نحو 100 متر) وتدخل في مفتاح التشفير.</div>
-</div>
-
-<label class="sw"><input type="checkbox" id="timeOn">⏱ القفل الزمني (Time-Lock)</label>
-<div class="box hide" id="timeBox">
-<select id="timeSel" aria-label="موعد الفتح">
-<option value="5">تُفتح بعد 5 دقائق</option>
-<option value="60">تُفتح بعد ساعة</option>
-<option value="1440">تُفتح بعد 24 ساعة</option>
-<option value="c">في وقت محدد</option>
-</select>
-<input id="timeAt" type="datetime-local" class="hide" style="margin-top:8px">
-</div>
-
-<label class="sw"><input type="checkbox" id="expOn">💣 التدمير الذاتي (Self-Destruct)</label>
-<div class="box hide" id="expBox">
-<select id="expSel" aria-label="مدة الصلاحية">
-<option value="10">تنتهي بعد 10 دقائق</option>
-<option value="60">تنتهي بعد ساعة</option>
-<option value="1440">تنتهي بعد 24 ساعة</option>
-<option value="10080">تنتهي بعد 7 أيام</option>
-</select>
-<div class="mu">تُحسب المدة من وقت الفتح المحدد في القفل الزمني، أو من لحظة الإنشاء إن لم تفعّله.</div>
-<label class="sw" style="margin-top:8px"><input type="checkbox" id="burn">🔥 تُحرق بعد القراءة مرة واحدة (على جهاز المستلم)</label>
-</div>
-<div class="err" id="cErr"></div>
-<div class="row"><button class="btn g" id="mk" type="button">🔒 إنشاء الخزنة وتوليد الرابط</button></div>
-</div>
-<div class="glass hide" id="done">
-<b class="ok">تم إنشاء الخزنة</b>
-<div class="chips" id="sum"></div>
-<label class="l" for="link">الرابط السري</label>
-<textarea id="link" readonly style="min-height:90px;direction:ltr;text-align:left;font-size:.8rem"></textarea>
-<div class="row"><button class="btn" id="cp" type="button">نسخ الرابط السري</button><span class="mu" id="cpOk"></span></div>
-<div class="mu" style="margin-top:10px">أرسل الرابط كاملاً بما فيه الجزء بعد علامة #. لا يصل هذا الجزء إلى أي خادم.</div>
-</div>
+<section class="screen on" id="sRole">
+  <div class="box">
+    <h1>Quantum Orb</h1>
+    <p class="sub">القنبلة الضوئية العابرة للشاشات<br>اجمع هاتفين جنباً إلى جنب وحوّلهما إلى شاشة واحدة ممتدة</p>
+    <button class="btn" id="bSend">الهاتف الأول (اليسار - المرسل)<small>تنشئ الغرفة وتحرك الكرة</small></button>
+    <button class="btn v" id="bRecv">الهاتف الثاني (اليمين - المستلم)<small>تدخل كود الغرفة وتستقبل الكرة</small></button>
+  </div>
 </section>
 
-<section id="open" class="hide">
-<div class="glass">
-<b>🛡 خزنة مشفّرة بانتظار الفتح</b>
-<div class="chips" id="need"></div>
-<div id="pwRow" class="hide"><label class="l" for="pw2">كلمة المرور</label><input id="pw2" type="password" autocomplete="off"></div>
-<div class="err" id="oErr"></div>
-<div class="mu" id="oSt"></div>
-<div class="row"><button class="btn g" id="op" type="button">فتح الخزنة</button><button class="btn o" id="nw" type="button">إنشاء خزنة جديدة</button></div>
-</div>
-<div class="glass hide" id="lockd"><b>⏳ الخزنة مقفلة زمنياً</b><div class="big" id="cd"></div><div class="mu" id="cdAt"></div></div>
-<div class="glass hide" id="reveal">
-<b class="ok">تم فتح الخزنة</b>
-<p class="mu">حرّك إصبعك أو المؤشر فوق الشاشة لتضيء منطقة صغيرة من الرسالة. تختفي عند مغادرة الصفحة أو الضغط على PrintScreen.</p>
-<div id="stageWrap"><div id="stage" tabindex="0" aria-label="الرسالة السرية"></div></div>
-</div>
+<section class="screen" id="sSend">
+  <div class="box">
+    <div class="label">كود الغرفة</div>
+    <div class="code" id="code">····</div>
+    <p class="sub" style="margin:6px 0 4px">أدخل هذا الكود في الهاتف الثاني</p>
+    <input id="secret" maxlength="120" placeholder="الرسالة السرية (اختياري)" value="أنتما الآن شاشة واحدة ✨">
+    <div class="status"><i class="dot wait" id="sdot"></i><span id="sst">جارٍ إنشاء الغرفة…</span></div>
+    <button class="btn g" id="bStart" disabled>ابدأ</button>
+  </div>
 </section>
+
+<section class="screen" id="sRecv">
+  <div class="box">
+    <h1 style="font-size:32px">الهاتف الثاني</h1>
+    <p class="sub">ضع هذا الهاتف على يمين الهاتف الأول، ثم أدخل الكود الظاهر عليه</p>
+    <input id="room" class="num" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
+    <div class="status"><i class="dot" id="rdot"></i><span id="rst">أدخل الكود المكوّن من 4 أرقام</span></div>
+    <button class="btn" id="bConn">اتصال</button>
+  </div>
+</section>
+
+<div id="card">
+  <div class="t">الرسالة السرية</div>
+  <div id="msg"></div>
+  <button class="btn v" id="bAgain">أعد الكرة</button>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <script>
-(function(){
-"use strict";
-var $=function(i){return document.getElementById(i)},C=CryptoJS,ITER=10000;
-function b64u(w){return C.enc.Base64.stringify(w).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
-function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return C.enc.Base64.parse(s)}
-function r3(x){return (Math.round(x*1000)/1000).toFixed(3)}
-function secretOf(p,g){return p+"|"+(g?g[0]+","+g[1]:"-")}
-function derive(sec,salt){var k=C.PBKDF2(sec,salt,{keySize:16,iterations:ITER,hasher:C.algo.SHA256});return{e:C.lib.WordArray.create(k.words.slice(0,8),32),m:C.lib.WordArray.create(k.words.slice(8,16),32)}}
-function seal(obj,pass,geo){
- var salt=C.lib.WordArray.random(16),iv=C.lib.WordArray.random(16),k=derive(secretOf(pass,geo),salt);
- var ct=C.AES.encrypt(JSON.stringify(obj),k.e,{iv:iv,mode:C.mode.CBC,padding:C.pad.Pkcs7}).ciphertext;
- var fl=(geo?1:0)|(pass?2:0);
- var head=C.enc.Hex.parse("01"+("0"+fl).slice(-2)+C.enc.Hex.stringify(salt)+C.enc.Hex.stringify(iv)+C.enc.Hex.stringify(ct));
- return b64u(head.clone().concat(C.HmacSHA256(head,k.m)));
+(()=>{
+const $=id=>document.getElementById(id);
+const cv=$('cv'),ctx=cv.getContext('2d');
+const COLORS=['#00f3ff','#bc13fe','#10b981'];
+let W=0,H=0,dpr=1;
+function resize(){dpr=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
+
+let role=null,peer=null,conn=null,connected=false,secretMsg='';
+const PREFIX='quantum-orb-';
+const R=()=>Math.max(38,Math.min(70,Math.min(W,H)*.11));
+
+/* ---------- Orb state ---------- */
+const orb={x:0,y:0,vx:0,vy:0,r:50,vis:false};
+let trail=[],particles=[],rings=[],gather=[];
+let state='idle'; // sender: play|gone ; receiver: idle|incoming|glide|gather|boom|card
+let dragging=false,ptr={x:0,y:0},sentVisible=false,lastPkt=0,gatherT=0;
+
+/* ---------- UI helpers ---------- */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
+function hud(txt,ok){$('hud').style.display='flex';$('htxt').textContent=txt;$('hdot').className='dot '+(ok?'ok':'wait')}
+function send(o){if(conn&&conn.open)try{conn.send(o)}catch(e){}}
+
+/* ---------- Roles ---------- */
+$('bSend').onclick=()=>{role='send';show('sSend');startSender()};
+$('bRecv').onclick=()=>{role='recv';show('sRecv');$('room').focus()};
+
+function startSender(attempt=0){
+  const code=String(Math.floor(1000+Math.random()*9000));
+  $('code').textContent=code;
+  if(typeof Peer==='undefined'){$('sst').textContent='تعذّر تحميل PeerJS، تحقق من الإنترنت';return}
+  peer=new Peer(PREFIX+code);
+  peer.on('open',()=>{$('sst').textContent='بانتظار الهاتف الثاني…'});
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'&&attempt<6){peer.destroy();startSender(attempt+1)}
+    else $('sst').textContent='خطأ في الاتصال: '+e.type;
+  });
+  peer.on('connection',c=>{
+    conn=c;
+    c.on('open',()=>{connected=true;$('sdot').className='dot ok';$('sst').textContent='تم الربط بنجاح ✓';$('bStart').disabled=false;
+      secretMsg=$('secret').value.trim();send({t:'hello'})});
+    c.on('data',d=>{if(d.t==='reset')respawn()});
+    c.on('close',()=>{connected=false;$('sdot').className='dot wait';$('sst').textContent='انقطع الاتصال، بانتظار الهاتف الثاني…';$('bStart').disabled=true;hud('انقطع الاتصال',false)});
+  });
 }
-function tryOpen(hex,pass,geo){
- var mac=hex.slice(-64),body=hex.slice(0,-64),salt=C.enc.Hex.parse(body.substr(4,32)),iv=C.enc.Hex.parse(body.substr(36,32)),ct=C.enc.Hex.parse(body.slice(68));
- var k=derive(secretOf(pass,geo),salt);
- if(C.HmacSHA256(C.enc.Hex.parse(body),k.m).toString()!==mac)return null;
- return JSON.parse(C.AES.decrypt({ciphertext:ct},k.e,{iv:iv,mode:C.mode.CBC,padding:C.pad.Pkcs7}).toString(C.enc.Utf8));
-}
-function tick(){return new Promise(function(r){setTimeout(r,25)})}
-function getPos(){
- return new Promise(function(res,rej){
-  if(!navigator.geolocation)return rej(new Error("المتصفح لا يدعم تحديد الموقع."));
-  navigator.geolocation.getCurrentPosition(res,function(e){
-   rej(new Error(e.code===1?"تم رفض إذن الموقع. اسمح به من إعدادات المتصفح ثم أعد المحاولة.":e.code===2?"تعذّر تحديد الموقع. فعّل GPS وأعد المحاولة.":"انتهت مهلة تحديد الموقع."))
-  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
- });
-}
-function fmt(t){return new Date(t).toLocaleString("ar-EG")}
-function copyText(t,el){
- function ok(){el.textContent="تم النسخ"}
- function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");ok()}catch(e){el.textContent="تعذّر النسخ"}a.remove()}
- if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+$('bStart').onclick=()=>{secretMsg=$('secret').value.trim()||'أنتما الآن شاشة واحدة ✨';show('');respawn();hud('اسحب الكرة نحو الحافة اليمنى وأفلتها',true);requestAnimationFrame(loop)};
+
+function respawn(){orb.r=R();orb.x=W*.3;orb.y=H*.5;orb.vx=orb.vy=0;orb.vis=true;state='play';trail=[];sentVisible=false;
+  if(connected)hud('اسحب الكرة نحو الحافة اليمنى وأفلتها',true)}
+
+$('bConn').onclick=connectReceiver;
+$('room').addEventListener('keydown',e=>{if(e.key==='Enter')connectReceiver()});
+function connectReceiver(){
+  const code=$('room').value.trim();
+  if(!/^\d{4}$/.test(code)){$('rst').textContent='الكود يجب أن يكون 4 أرقام';return}
+  if(typeof Peer==='undefined'){$('rst').textContent='تعذّر تحميل PeerJS، تحقق من الإنترنت';return}
+  $('rdot').className='dot wait';$('rst').textContent='جارٍ الاتصال…';$('bConn').disabled=true;
+  if(peer)peer.destroy();
+  peer=new Peer();
+  peer.on('open',()=>{
+    conn=peer.connect(PREFIX+code,{reliable:true});
+    conn.on('open',()=>{connected=true;$('rdot').className='dot ok';show('');state='idle';hud('تم الربط ✓ انتظر وصول الكرة من الهاتف الأول',true);requestAnimationFrame(loop)});
+    conn.on('data',onRecv);
+    conn.on('close',()=>{connected=false;hud('انقطع الاتصال',false)});
+  });
+  peer.on('error',e=>{$('bConn').disabled=false;$('rdot').className='dot';$('rst').textContent=e.type==='peer-unavailable'?'الكود غير صحيح أو الغرفة غير موجودة':'خطأ في الاتصال: '+e.type});
 }
 
-/* ---------- create ---------- */
-$("geoOn").onchange=function(){$("geoBox").classList.toggle("hide",!this.checked)};
-$("timeOn").onchange=function(){$("timeBox").classList.toggle("hide",!this.checked)};
-$("timeSel").onchange=function(){$("timeAt").classList.toggle("hide",this.value!=="c")};
-$("expOn").onchange=function(){$("expBox").classList.toggle("hide",!this.checked)};
-$("locBtn").onclick=function(){
- var b=this;b.disabled=true;$("cErr").textContent="";$("geoNote").textContent="جارٍ تحديد موقعك...";
- getPos().then(function(p){
-  $("lat").value=r3(p.coords.latitude);$("lon").value=r3(p.coords.longitude);
-  $("geoNote").textContent="تم التحديد بدقة نحو "+Math.round(p.coords.accuracy)+" متر. تُقرَّب الإحداثيات إلى 3 خانات عشرية.";
- }).catch(function(e){$("geoNote").textContent="";$("cErr").textContent=e.message}).then(function(){b.disabled=false});
-};
-$("mk").onclick=function(){
- var err=$("cErr"),msg=$("msg").value,pass=$("pw").value,geo=null,t0=0;err.textContent="";
- if(!msg.trim()){err.textContent="اكتب الرسالة السرية أولاً.";return}
- if($("geoOn").checked){
-  var la=parseFloat($("lat").value),lo=parseFloat($("lon").value);
-  if(!isFinite(la)||!isFinite(lo)||Math.abs(la)>90||Math.abs(lo)>180){err.textContent="الإحداثيات غير صالحة. حدّد موقعك بالزر أو أدخل خط عرض بين -90 و90 وخط طول بين -180 و180.";return}
-  geo=[r3(la),r3(lo)];
- }
- if($("timeOn").checked){
-  var s=$("timeSel").value;
-  if(s==="c"){t0=new Date($("timeAt").value).getTime();if(!isFinite(t0)){err.textContent="اختر تاريخاً ووقتاً صحيحين.";return}if(t0<=Date.now()){err.textContent="الوقت المحدد يجب أن يكون في المستقبل.";return}}
-  else t0=Date.now()+(+s)*60000;
- }
- var btn=this;btn.disabled=true;btn.textContent="جارٍ التشفير...";
- setTimeout(function(){
-  try{
-   var xx=0,bn=0;if($("expOn").checked){xx=(t0||Date.now())+(+$("expSel").value)*60000;bn=$("burn").checked?1:0}
-   var tok=seal({v:1,m:msg,t:t0,c:Date.now(),x:xx,b:bn},pass,geo);
-   $("link").value=location.href.split("#")[0]+"#data="+tok;
-   var h="<span class='chip'>🔐 AES-256 + HMAC</span>";
-   if(geo)h+="<span class='chip'>📍 "+geo[0]+" , "+geo[1]+"</span>";
-   if(t0)h+="<span class='chip'>⏱ تُفتح "+fmt(t0)+"</span>";
-   if(pass)h+="<span class='chip'>🔑 كلمة مرور</span>";
-   if(xx)h+="<span class='chip'>💣 تنتهي "+fmt(xx)+"</span>";if(bn)h+="<span class='chip'>🔥 تُحرق بعد القراءة</span>";$("sum").innerHTML=h;$("done").classList.remove("hide");$("cpOk").textContent="";
-   $("done").scrollIntoView({behavior:"smooth"});
-  }catch(e){err.textContent="فشل التشفير: "+e.message}
-  btn.disabled=false;btn.textContent="🔒 إنشاء الخزنة وتوليد الرابط";
- },40);
-};
-$("cp").onclick=function(){copyText($("link").value,$("cpOk"))};
-
-/* ---------- open ---------- */
-var hex="",flags=0,secret=null,cdT=0,xT=0,exp=0,burn=0,vid="";
-function route(){
- var m=/^#data=([A-Za-z0-9_-]+)$/.exec(location.hash);
- $("create").classList.toggle("hide",!!m);$("open").classList.toggle("hide",!m);
- if(!m)return;
- try{hex=C.enc.Hex.stringify(unb64u(m[1]))}catch(e){hex=""}
- if(hex.length<68+64+32||hex.substr(0,2)!=="01"){$("oErr").textContent="الرابط تالف أو غير مكتمل. اطلب من المرسل إعادة إرساله كاملاً.";$("op").disabled=true;return}
- flags=parseInt(hex.substr(2,2),16);vid="burn:"+hex.slice(-16);
- if(isBurned()){gone("تم تدمير هذه الخزنة بعد قراءتها على هذا الجهاز.");return}
- var h="<span class='chip'>🔐 AES-256</span>";
- if(flags&1)h+="<span class='chip'>📍 يتطلب موقعاً جغرافياً محدداً</span>";
- if(flags&2)h+="<span class='chip'>🔑 يتطلب كلمة مرور</span>";
- $("need").innerHTML=h;$("pwRow").classList.toggle("hide",!(flags&2));
+/* ---------- Receiver messages ---------- */
+function onRecv(d){
+  if(d.msg)secretMsg=d.msg;
+  if(state==='gather'||state==='boom'||state==='card')return;
+  if(d.t==='orb'){
+    orb.r=d.r;orb.x=d.xo;orb.y=d.yr*H;orb.vx=d.vx;orb.vy=d.vy;orb.vis=true;state='incoming';lastPkt=performance.now();
+  }else if(d.t==='own'){
+    orb.r=d.r;orb.x=d.xo;orb.y=d.yr*H;orb.vx=Math.max(d.vx,3);orb.vy=d.vy*.3;orb.vis=true;state='glide';
+  }else if(d.t==='hide'){orb.vis=false;state='idle'}
 }
-window.addEventListener("hashchange",route);route();
-$("nw").onclick=function(){location.hash="";route()};
-$("op").onclick=function(){
- var btn=this,pass=$("pw2").value,e=$("oErr");e.textContent="";
- if((flags&2)&&!pass){e.textContent="أدخل كلمة المرور.";return}
- btn.disabled=true;
- var cells=[[0,0]];
- var chain=(flags&1)?($("oSt").textContent="جارٍ تحديد موقعك...",getPos().then(function(p){
-  var la=Math.round(p.coords.latitude*1000),lo=Math.round(p.coords.longitude*1000);
-  cells=[];for(var a=0;a<9;a++){cells.push([a%3-1,Math.floor(a/3)-1])}
-  cells.sort(function(x,y){return Math.abs(x[0])+Math.abs(x[1])-Math.abs(y[0])-Math.abs(y[1])});
-  return{la:la,lo:lo};
- })):Promise.resolve({la:0,lo:0});
- chain.then(function(base){
-  $("oSt").textContent="جارٍ التحقق من الشروط...";
-  var i=0,found=null;
-  function next(){
-   if(i>=cells.length||found)return Promise.resolve(found);
-   var c=cells[i++],g=(flags&1)?[r3((base.la+c[0])/1000),r3((base.lo+c[1])/1000)]:null;
-   return tick().then(function(){found=tryOpen(hex,pass,g);return next()});
+
+/* ---------- Input (sender) ---------- */
+let lastP=null;
+cv.addEventListener('pointerdown',e=>{
+  if(role!=='send'||state!=='play')return;
+  const d=Math.hypot(e.clientX-orb.x,e.clientY-orb.y);
+  if(d<orb.r*2){dragging=true;ptr.x=e.clientX;ptr.y=e.clientY;lastP={x:orb.x,y:orb.y};orb.vx=orb.vy=0;cv.setPointerCapture(e.pointerId)}
+});
+cv.addEventListener('pointermove',e=>{if(dragging){ptr.x=e.clientX;ptr.y=e.clientY}});
+const endDrag=()=>{
+  if(!dragging)return;dragging=false;
+  if(connected&&orb.x>W-orb.r*1.4)orb.vx=Math.max(orb.vx,9);
+};
+cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+
+/* ---------- Drawing ---------- */
+function drawOrb(x,y,r,t,k=1){
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  let g=ctx.createRadialGradient(x,y,r*.1,x,y,r*2.4);
+  g.addColorStop(0,'rgba(0,243,255,'+.55*k+')');g.addColorStop(.45,'rgba(188,19,254,'+.28*k+')');g.addColorStop(1,'rgba(188,19,254,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*2.4,0,7);ctx.fill();
+  g=ctx.createRadialGradient(x-r*.25,y-r*.3,r*.05,x,y,r);
+  g.addColorStop(0,'#fff');g.addColorStop(.35,'#7ffaff');g.addColorStop(.75,'#00f3ff');g.addColorStop(1,'#bc13fe');
+  ctx.fillStyle=g;ctx.shadowColor='#00f3ff';ctx.shadowBlur=30;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  ctx.shadowBlur=0;ctx.lineWidth=2.5;
+  ctx.strokeStyle='rgba(16,185,129,.95)';ctx.setLineDash([r*.35,r*.2]);ctx.lineDashOffset=-t*40;
+  ctx.beginPath();ctx.arc(x,y,r*1.25,0,7);ctx.stroke();
+  ctx.strokeStyle='rgba(188,19,254,.9)';ctx.setLineDash([r*.15,r*.3]);ctx.lineDashOffset=t*60;
+  ctx.beginPath();ctx.arc(x,y,r*1.5,0,7);ctx.stroke();
+  ctx.setLineDash([]);ctx.restore();
+}
+function drawTrail(){
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  for(const p of trail){
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    g.addColorStop(0,'rgba(0,243,255,'+p.a*.5+')');g.addColorStop(1,'rgba(188,19,254,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();p.a-=.045;p.r*=.97;
   }
-  return next();
- }).then(function(obj){
-  if(!obj){e.textContent=(flags&1)?"تعذّر الفتح: كلمة المرور خاطئة أو أنك لست في الموقع المطلوب (السماحية نحو 100 متر).":"تعذّر الفتح: كلمة المرور خاطئة أو البيانات تالفة.";$("oSt").textContent="";btn.disabled=false;return}
-  $("oSt").textContent="";$("pw2").value="";$("op").parentNode.parentNode.classList.add("hide");
-  secret=obj.m;burn=obj.b||0;exp=obj.x||0;
-  if(exp&&Date.now()>exp){secret=null;gone("انتهت صلاحية هذه الخزنة وتم تدميرها.");return}
-  if(obj.t>Date.now())lockCountdown(obj.t);else show();
- }).catch(function(x){e.textContent=x.message;$("oSt").textContent="";btn.disabled=false});
-};
-function isBurned(){try{return localStorage.getItem(vid)==="1"}catch(e){return false}}
-function gone(msg){
- $("op").parentNode.parentNode.classList.remove("hide");$("lockd").classList.add("hide");$("reveal").classList.add("hide");
- $("pwRow").classList.add("hide");$("need").innerHTML="<span class='chip'>💥 مدمَّرة</span>";$("oErr").textContent=msg;$("oSt").textContent="";$("op").disabled=true;
+  trail=trail.filter(p=>p.a>0);ctx.restore();
 }
-function destroy(msg){
- secret=null;hex="";clearInterval(cdT);clearInterval(xT);$("stage").textContent="";
- try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
- gone(msg);
-}
-function lockCountdown(t){
- $("lockd").classList.remove("hide");$("cdAt").textContent="تُفتح في "+fmt(t)+" حسب ساعة جهازك.";
- function u(){
-  var d=t-Date.now();
-  if(d<=0){clearInterval(cdT);$("lockd").classList.add("hide");show();return}
-  var s=Math.ceil(d/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),z=s%60;
-  $("cd").textContent=[h,m,z].map(function(n){return("0"+n).slice(-2)}).join(":");
- }
- u();cdT=setInterval(u,1000);
-}
+function pushTrail(){if(orb.vis)trail.push({x:orb.x,y:orb.y,r:orb.r*1.1,a:1})}
 
-/* ---------- anti-screenshot spotlight ---------- */
-var st=$("stage");
-function show(){
- $("reveal").classList.remove("hide");st.textContent=secret;st.classList.remove("veil");
- if(burn){try{localStorage.setItem(vid,"1")}catch(x){}}
- if(exp){clearInterval(xT);xT=setInterval(function(){if(Date.now()>exp)destroy("انتهت صلاحية الخزنة وتم تدميرها.")},1000)}
+/* ---------- Explosion ---------- */
+function explode(){
+  state='boom';orb.vis=false;
+  const cx=orb.x,cy=orb.y;
+  for(let i=0;i<420;i++){
+    const a=Math.random()*Math.PI*2,s=Math.pow(Math.random(),.5)*Math.max(W,H)*.022+1;
+    particles.push({x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:70+Math.random()*80,max:150,size:1.2+Math.random()*3.2,c:COLORS[i%3]});
+  }
+  rings.push({x:cx,y:cy,r:orb.r,a:1,c:'#00f3ff'},{x:cx,y:cy,r:orb.r*.5,a:1,c:'#bc13fe'});
+  const f=$('flash');f.style.transition='none';f.style.opacity='.95';
+  requestAnimationFrame(()=>{f.style.transition='opacity .9s ease-out';f.style.opacity='0'});
+  if(navigator.vibrate)navigator.vibrate([220,60,120,60,320]);
+  setTimeout(showCard,650);
 }
-function move(ev){
- var p=ev.touches?ev.touches[0]:ev;if(!p)return;
- var r=st.getBoundingClientRect();
- st.style.setProperty("--x",(p.clientX-r.left)+"px");st.style.setProperty("--y",(p.clientY-r.top)+"px");
- st.classList.remove("veil");
+function showCard(){
+  state='card';const el=$('msg'),txt=Array.from(secretMsg||'أنتما الآن شاشة واحدة ✨');
+  el.textContent='';el.classList.remove('done');$('card').classList.add('on');
+  let i=0;const iv=setInterval(()=>{el.textContent=txt.slice(0,++i).join('');if(i>=txt.length){clearInterval(iv);el.classList.add('done')}},65);
 }
-function off(){st.style.removeProperty("--x");st.style.removeProperty("--y")}
-["pointermove","pointerdown","touchstart","touchmove"].forEach(function(n){st.addEventListener(n,move,{passive:true})});
-["pointerleave","touchend","touchcancel"].forEach(function(n){st.addEventListener(n,off)});
-function hide(){off();st.classList.add("veil")}
-document.addEventListener("visibilitychange",function(){if(document.hidden)hide()});
-window.addEventListener("blur",hide);
-window.addEventListener("pagehide",hide);
-document.addEventListener("keyup",function(e){if(e.key==="PrintScreen"){hide();try{navigator.clipboard.writeText("")}catch(x){}}});
-document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&/^[spc]$/i.test(e.key)&&!$("reveal").classList.contains("hide")){e.preventDefault();hide()}});
-st.addEventListener("contextmenu",function(e){e.preventDefault()});
-st.addEventListener("copy",function(e){e.preventDefault()});
+$('bAgain').onclick=()=>{
+  $('card').classList.remove('on');particles=[];rings=[];trail=[];orb.vis=false;state='idle';
+  send({t:'reset'});hud('تم الربط ✓ انتظر وصول الكرة من الهاتف الأول',true);
+};
+
+/* ---------- Main loop ---------- */
+let t0=performance.now();
+function loop(now){
+  const t=(now-t0)/1000;
+  ctx.clearRect(0,0,W,H);
+  if(role==='send')stepSender(t);else stepReceiver(t,now);
+  drawTrail();
+  if(orb.vis){const bob=(state==='play'&&!dragging)?Math.sin(t*2)*3:0;drawOrb(orb.x,orb.y+bob,orb.r*(state==='gather'?gatherScale():1),t,1)}
+  drawFX();
+  requestAnimationFrame(loop);
+}
+function stepSender(t){
+  if(state!=='play')return;
+  const r=orb.r;
+  if(dragging){
+    const nx=orb.x+(Math.min(ptr.x,W)-orb.x)*.35,ny=orb.y+(ptr.y-orb.y)*.35;
+    orb.vx=orb.vx*.6+(nx-orb.x)*.4;orb.vy=orb.vy*.6+(ny-orb.y)*.4;
+    orb.x=nx;orb.y=Math.max(r,Math.min(H-r,ny));
+  }else{
+    orb.x+=orb.vx;orb.y+=orb.vy;orb.vx*=.985;orb.vy*=.985;
+    if(connected&&orb.x>W-r*.9&&orb.vx<7)orb.vx=7;   // push across the edge
+    if(orb.x<r){orb.x=r;orb.vx=Math.abs(orb.vx)*.7}
+    if(!connected&&orb.x>W-r){orb.x=W-r;orb.vx=-Math.abs(orb.vx)*.7}
+    if(orb.y<r){orb.y=r;orb.vy=Math.abs(orb.vy)*.7}
+    if(orb.y>H-r){orb.y=H-r;orb.vy=-Math.abs(orb.vy)*.7}
+  }
+  pushTrail();
+  if(connected){
+    if(orb.x-r>W){ // fully out: hand over to the second phone
+      send({t:'own',xo:orb.x-W,yr:orb.y/H,r,vx:orb.vx,vy:orb.vy,msg:secretMsg});
+      state='gone';orb.vis=false;dragging=false;if(navigator.vibrate)navigator.vibrate(40);
+      hud('عبرت الكرة إلى الهاتف الثاني ✨',true);
+    }else if(orb.x+r>W){
+      send({t:'orb',xo:orb.x-W,yr:orb.y/H,r,vx:orb.vx,vy:orb.vy,msg:secretMsg});sentVisible=true;
+    }else if(sentVisible){send({t:'hide'});sentVisible=false}
+  }
+}
+function stepReceiver(t,now){
+  const cx=W/2,cy=H/2;
+  if(state==='incoming'&&now-lastPkt>350){orb.vis=false;state='idle'}
+  if(state==='incoming')pushTrail();
+  if(state==='glide'){
+    orb.x+=(cx-orb.x)*.05+orb.vx*.5;orb.y+=(cy-orb.y)*.05+orb.vy*.5;orb.vx*=.94;orb.vy*=.94;pushTrail();
+    if(Math.abs(cx-orb.x)<4&&Math.abs(cy-orb.y)<4){orb.x=cx;orb.y=cy;state='gather';gatherT=performance.now();gather=[]}
+  }
+  if(state==='gather'){
+    const p=(now-gatherT)/650;
+    if(Math.random()<.9)for(let i=0;i<3;i++){const a=Math.random()*7,d=orb.r*(3.2+Math.random()*2);gather.push({a,d,c:COLORS[(Math.random()*3)|0]})}
+    if(p>=1){gather=[];explode()}
+  }
+}
+function gatherScale(){const p=Math.min(1,(performance.now()-gatherT)/650);return 1-.35*p+Math.sin(p*40)*.04}
+function drawFX(){
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  if(state==='gather'){
+    const p=Math.min(1,(performance.now()-gatherT)/650);
+    for(const g of gather){const d=g.d*(1-p*.9);ctx.fillStyle=g.c;ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(orb.x+Math.cos(g.a)*d,orb.y+Math.sin(g.a)*d,2.2,0,7);ctx.fill()}
+    gather.length>260&&gather.splice(0,60);
+  }
+  ctx.globalAlpha=1;
+  for(const r of rings){ctx.strokeStyle=r.c;ctx.globalAlpha=r.a;ctx.lineWidth=4*r.a+1;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.stroke();r.r+=Math.max(W,H)*.02;r.a-=.018}
+  rings=rings.filter(r=>r.a>0);
+  for(const p of particles){
+    p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.03;p.life--;
+    ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.c;ctx.shadowColor=p.c;ctx.shadowBlur=8;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,7);ctx.fill();
+  }
+  particles=particles.filter(p=>p.life>0);
+  ctx.restore();
+}
 })();
 </script>
 </body>
